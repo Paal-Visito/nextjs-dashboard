@@ -102,15 +102,15 @@ async function seedUsers() {
 // }
 
 async function dropRevenue() {
-  await sql`DROP TABLE revenue;`;
+  await sql`DROP TABLE IF EXISTS revenue;`;
 }
 
 async function dropInvoices() {
-  await sql`DROP TABLE invoices;`;
+  await sql`DROP TABLE IF EXISTS invoices;`;
 }
 
 async function dropCustomers() {
-  await sql`DROP TABLE customers;`;
+  await sql`DROP TABLE IF EXISTS customers;`;
 }
 
 export async function GET() {
