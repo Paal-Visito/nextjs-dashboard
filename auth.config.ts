@@ -1,9 +1,11 @@
 import type { NextAuthConfig } from 'next-auth'
+import { tr } from 'zod/v4/locales'
  
 export const authConfig = {
   pages: {
     signIn: '/login'
   },
+  trustHost: true,
   callbacks: {
     authorized({ auth, request: { nextUrl }}) {
         const isLoggedIn = !!auth?.user
