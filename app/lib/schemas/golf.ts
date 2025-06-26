@@ -1,4 +1,4 @@
-import { date, z } from 'zod'
+import { z } from 'zod'
 
 // Define the golf data schema
 export const GolfDataSchema = z.object({
