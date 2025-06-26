@@ -5,16 +5,6 @@ import { users } from '../lib/placeholder-data';
 const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' });
 
 async function seedUsers() {
-  await sql`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`;
-  await sql`
-    CREATE TABLE IF NOT EXISTS users (
-      id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
-      name VARCHAR(255) NOT NULL,
-      email TEXT NOT NULL UNIQUE,
-      password TEXT NOT NULL
-    );
-  `;
-
   const insertedUsers = await Promise.all(
     users.map(async (user) => {
       const hashedPassword = await bcrypt.hash(user.password, 10);
@@ -29,101 +19,52 @@ async function seedUsers() {
   return insertedUsers;
 }
 
-// async function seedInvoices() {
-//   await sql`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`;
+async function setupDatabase() {
+  try {
+    // Create extension
+    await sql`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`;
 
-//   await sql`
-//     CREATE TABLE IF NOT EXISTS invoices (
-//       id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
-//       customer_id UUID NOT NULL,
-//       amount INT NOT NULL,
-//       status VARCHAR(255) NOT NULL,
-//       date DATE NOT NULL
-//     );
-//   `;
+    // Create users table
+    await sql`
+      CREATE TABLE IF NOT EXISTS users (
+        id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+        name VARCHAR(255) NOT NULL,
+        email TEXT NOT NULL UNIQUE,
+        password TEXT NOT NULL
+      )
+    `;
 
-//   const insertedInvoices = await Promise.all(
-//     invoices.map(
-//       (invoice) => sql`
-//         INSERT INTO invoices (customer_id, amount, status, date)
-//         VALUES (${invoice.customer_id}, ${invoice.amount}, ${invoice.status}, ${invoice.date})
-//         ON CONFLICT (id) DO NOTHING;
-//       `,
-//     ),
-//   );
+    // Create golf table
+    await sql`
+      CREATE TABLE IF NOT EXISTS golf (
+        id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+        created TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+        updated TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+        data jsonb NOT NULL DEFAULT '{}'::jsonb
+      )
+    `;
 
-//   return insertedInvoices;
-// }
+    // Check and seed users if needed
+    const userCount = await sql`SELECT COUNT(*) FROM users`;
+    if (userCount[0].count === '0') {
+      await seedUsers();
+    }
 
-// async function seedCustomers() {
-//   await sql`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`;
-
-//   await sql`
-//     CREATE TABLE IF NOT EXISTS customers (
-//       id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
-//       name VARCHAR(255) NOT NULL,
-//       email VARCHAR(255) NOT NULL,
-//       image_url VARCHAR(255) NOT NULL
-//     );
-//   `;
-
-//   const insertedCustomers = await Promise.all(
-//     customers.map(
-//       (customer) => sql`
-//         INSERT INTO customers (id, name, email, image_url)
-//         VALUES (${customer.id}, ${customer.name}, ${customer.email}, ${customer.image_url})
-//         ON CONFLICT (id) DO NOTHING;
-//       `,
-//     ),
-//   );
-
-//   return insertedCustomers;
-// }
-
-// async function seedRevenue() {
-//   await sql`
-//     CREATE TABLE IF NOT EXISTS revenue (
-//       month VARCHAR(4) NOT NULL UNIQUE,
-//       revenue INT NOT NULL
-//     );
-//   `;
-
-//   const insertedRevenue = await Promise.all(
-//     revenue.map(
-//       (rev) => sql`
-//         INSERT INTO revenue (month, revenue)
-//         VALUES (${rev.month}, ${rev.revenue})
-//         ON CONFLICT (month) DO NOTHING;
-//       `,
-//     ),
-//   );
-
-//   return insertedRevenue;
-// }
-
-async function dropRevenue() {
-  await sql`DROP TABLE IF EXISTS revenue;`;
-}
-
-async function dropInvoices() {
-  await sql`DROP TABLE IF EXISTS invoices;`;
-}
-
-async function dropCustomers() {
-  await sql`DROP TABLE IF EXISTS customers;`;
+    return { success: true };
+  } catch (error) {
+    console.error('Error in setupDatabase:', error);
+    throw error;
+  }
 }
 
 export async function GET() {
   try {
-    await sql.begin(() => [
-      seedUsers(),
-      dropCustomers(),
-      dropInvoices(),
-      dropRevenue(),
-    ]);
-
+    // Execute setup without using sql.begin
+    await setupDatabase();
+    
     return Response.json({ message: 'Database seeded successfully' });
   } catch (error) {
+    console.error('Error in GET:', error);
     return Response.json({ error }, { status: 500 });
   }
 }
