@@ -10,7 +10,7 @@ import { usePathname } from 'next/navigation';
 // Depending on the size of the application, this would be stored in a database.
 const links = [
   { name: 'Home', href: '/dashboard', icon: HomeIcon },
-  { name: 'Golf', href: '/dashboard/golf', icon: LandPlot }  
+  { name: 'Golf - Stats', href: '/dashboard/golf', icon: LandPlot }  
 ];
 
 export default function NavLinks() {

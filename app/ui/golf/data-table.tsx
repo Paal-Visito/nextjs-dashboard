@@ -18,22 +18,36 @@ import {
 } from "@/components/ui/table"
 
 import { Button } from "@/components/ui/button"
+import { GolfRound } from "./columns"
+import { GolfDetailsDialog } from "./golf-details-dialog"
+import { useEffect, useState } from "react"
 
-interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[]
-  data: TData[]
+type DataTableValue = string | number | null;
+interface DataTableProps {
+  columns: ColumnDef<GolfRound, DataTableValue>[]
+  data: GolfRound[]
 }
 
-export function DataTable<TData, TValue>({
+export function DataTable({
   columns,
   data,
-}: DataTableProps<TData, TValue>) {
+}: DataTableProps) {
+  const [selectedRound, setSelectedRound] = useState<GolfRound | null>(null)
+  const [dialogOpen, setDialogOpen] = useState(false)
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
   const table = useReactTable({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
   })
+
+  if (!mounted) return null
 
   return (
     <div>
@@ -42,18 +56,16 @@ export function DataTable<TData, TValue>({
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
-                  return (
-                    <TableHead key={header.id}>
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-                    </TableHead>
-                  )
-                })}
+                {headerGroup.headers.map((header) => (
+                  <TableHead key={header.id}>
+                    {header.isPlaceholder
+                      ? null
+                      : flexRender(
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
+                  </TableHead>
+                ))}
               </TableRow>
             ))}
           </TableHeader>
@@ -63,6 +75,11 @@ export function DataTable<TData, TValue>({
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
+                  className="cursor-pointer hover:bg-muted/50"
+                  onClick={() => {
+                    setSelectedRound(row.original as GolfRound)
+                    setDialogOpen(true)
+                  }}
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
@@ -99,6 +116,12 @@ export function DataTable<TData, TValue>({
           Next
         </Button>
       </div>
+      <GolfDetailsDialog
+        round={selectedRound}
+        data={data}
+        open={dialogOpen}
+        onOpenChange={setDialogOpen}
+      />
     </div>
   )
 }

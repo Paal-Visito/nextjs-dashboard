@@ -16,6 +16,11 @@ import {
 } from "@/components/ui/card";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { Calendar } from "@/components/ui/calendar"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import { format } from "date-fns"
+import { nb } from 'date-fns/locale'
+import { cn } from "@/lib/utils";
 
 interface GolfFormData {
     course: string
@@ -45,6 +50,13 @@ interface GolfFormData {
         bogeys: number | null
         doubleBogeys: number | null
         tripleBogeys: number | null
+    }
+}
+
+type CalendarInputEvent = {
+    target: {
+        name: string;
+        value: string;
     }
 }
 
@@ -139,7 +151,12 @@ export function CreateGolfForm() {
         }
     }
 
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement> | {
+        target: {
+            name: string;
+            value: string | number;
+        }
+    }) => {
         const { name, value } = e.target
         if (name.includes('.')) {
             const [parent, child] = name.split('.') as [keyof GolfFormData, string]
@@ -156,7 +173,7 @@ export function CreateGolfForm() {
                 [name]: value === '' ? null : (Number(value) || value)
             }))
         }
-    };
+    }
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>
@@ -164,7 +181,7 @@ export function CreateGolfForm() {
                 <Button variant="outline" className="border-white rounded-lg bg-black text-white">+</Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[625px] max-h-[90vh] overflow-y-auto">
-                <DialogHeader className="sticky top-0 bg-background z-10 pb-4">
+                <DialogHeader className="top-0 bg-background z-10 pb-4 mt-2">
                     <DialogTitle>Registrer ny runde</DialogTitle>
                 </DialogHeader>
                 <form onSubmit={handleSubmit}>
@@ -183,13 +200,39 @@ export function CreateGolfForm() {
                                     </div>
                                     <div className="grid w-full items-center gap-1.5">
                                         <Label htmlFor="date">Dato</Label>
-                                        <Input
-                                            type="date"
-                                            id="date"
-                                            name="date"
-                                            value={formData.date}
-                                            onChange={handleInputChange}
-                                        />
+                                        <Popover>
+                                            <PopoverTrigger asChild>
+                                                <Button
+                                                    variant={"outline"}
+                                                    className={cn(
+                                                        "w-full justify-start text-left font-normal",
+                                                        !formData.date && "text-muted-foreground"
+                                                    )}
+                                                >
+                                                    {formData.date ? (
+                                                        format(new Date(formData.date), "PPP", { locale: nb })
+                                                    ) : (
+                                                        <span>Velg en dato</span>
+                                                    )}
+                                                </Button>
+                                            </PopoverTrigger>
+                                            <PopoverContent className="w-auto p-0">
+                                                <Calendar
+                                                    mode="single"
+                                                    selected={formData.date ? new Date(formData.date) : undefined}
+                                                    onSelect={(date) =>
+                                                        handleInputChange({
+                                                            target: {
+                                                                name: 'date',
+                                                                value: date ? format(date, 'yyyy-MM-dd') : ''
+                                                            }
+                                                        } as CalendarInputEvent)
+                                                    }
+                                                    initialFocus
+                                                    locale={nb}
+                                                />
+                                            </PopoverContent>
+                                        </Popover>
                                     </div>
                                 </div>
                             </CardContent>

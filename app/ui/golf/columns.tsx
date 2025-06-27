@@ -1,8 +1,7 @@
 'use client'
 
 import { ColumnDef } from "@tanstack/react-table"
-
-import { format } from "date-fns"
+import { format, parseISO } from "date-fns"
 
 export type GolfRound = {
     id: string
@@ -43,7 +42,13 @@ export const columns: ColumnDef<GolfRound>[] = [
     {
         id: 'date',
         header: "Date",
-        accessorFn: (row) => format(row.data.date, 'dd.MM.yyy')
+        accessorFn: (row) => {
+            // First ensure we're working with a string date
+            const date = typeof row.data.date === 'string' 
+                ? parseISO(row.data.date) 
+                : new Date(row.data.date)
+            return format(date, 'dd.MM.yyyy')
+        }
     },
     {
         id: 'course',
