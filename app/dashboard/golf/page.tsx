@@ -45,7 +45,7 @@ export default async function GolfPage() {
                 <h1 className={`${lusitana.className} mb-4 text-xl md:text-2xl text-white`}>
                     Averages
                 </h1>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-2">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 justify-items-center gap-2">
                     <ScoringButton
                         title="Eagles"
                         value={totals.scoringAverages.eagles}
