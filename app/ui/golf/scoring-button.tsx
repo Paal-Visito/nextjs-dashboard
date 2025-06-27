@@ -22,9 +22,8 @@ export function ScoringButton({
     rounds,
     scoreKey
 }: ScoringButtonProps) {
-    // Transform data for the line chart
     const lineChartData = rounds
-        .sort((a, b) => new Date(a.data.date).getTime() - new Date(b.data.date).getTime())
+        .sort((a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime())
         .map(round => ({
             date: round.data.date,
             value: round.data.score[scoreKey]
@@ -51,16 +50,16 @@ export function ScoringButton({
         }
     }).reverse()
 
-    const totalShots = rounds.reduce((sum, round) => {
-        return sum + round.data.holes // Assuming 1 shot per hole is par
+    const totalHoles = rounds.reduce((sum, round) => {
+        return sum + round.data.holes
     }, 0)
 
     const totalScores = rounds.reduce((sum, round) => {
         return sum + round.data.score[scoreKey]
     }, 0)
 
-    const percentage = totalShots > 0
-        ? ((totalScores / totalShots) * 100).toFixed(1)
+    const percentage = totalHoles > 0
+        ? ((totalScores / totalHoles) * 100).toFixed(1)
         : '0'
 
     return (
@@ -119,7 +118,7 @@ export function ScoringButton({
                     <DialogTitle className="flex justify-between items-center mt-4">
                         <span>{title} per Round</span>
                         <span className="text-sm font-normal">
-                            {totalScores} {title.toLowerCase()} on {totalShots} holes ({percentage}%)
+                            {totalScores} {title.toLowerCase()} on {totalHoles} holes ({percentage}%)
                         </span>
                     </DialogTitle>
                 </DialogHeader>

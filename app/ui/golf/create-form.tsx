@@ -21,6 +21,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { format } from "date-fns"
 import { nb } from 'date-fns/locale'
 import { cn } from "@/lib/utils";
+import { Pencil } from "lucide-react";
 
 interface GolfFormData {
     course: string
@@ -60,11 +61,17 @@ type CalendarInputEvent = {
     }
 }
 
-export function CreateGolfForm() {
+interface CreateGolfFormProps {
+    initialData?: GolfFormData | null;
+    mode?: 'create' | 'edit';
+    id?: string;
+}
+
+export function CreateGolfForm({ initialData, mode = 'create', id }: CreateGolfFormProps) {
     const router = useRouter();
     const [open, setOpen] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const [formData, setFormData] = useState<GolfFormData>({
+    const [formData, setFormData] = useState<GolfFormData>(initialData || {
         course: '',
         date: '',
         points: null,
@@ -100,8 +107,8 @@ export function CreateGolfForm() {
         setIsSubmitting(true)
 
         try {
-            const response = await fetch('/api/golf', {
-                method: 'POST',
+            const response = await fetch(mode === 'create' ? '/api/golf' : `/api/golf/${id}`, {
+                method: mode === 'create' ? 'POST' : 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
                 },
@@ -109,8 +116,9 @@ export function CreateGolfForm() {
             });
 
             if (!response.ok) {
-                throw new Error('Failed to submit golf round')
+                throw new Error(`Failed to ${mode} golf round`)
             }
+
             setFormData({
                 course: '',
                 date: '',
@@ -140,8 +148,9 @@ export function CreateGolfForm() {
                     doubleBogeys: null,
                     tripleBogeys: null
                 }
-            });
-            setOpen(false);
+            })
+
+            setOpen(false)
             router.refresh()
 
         } catch (error) {
@@ -178,11 +187,19 @@ export function CreateGolfForm() {
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <Button variant="outline" className="border-white rounded-lg bg-black text-white">+</Button>
+                {mode === 'create' ? (
+                    <Button variant="outline" className="border-white rounded-lg bg-black text-white">+</Button>
+                ) : (
+                    <Button size="sm" variant="link" className="hover:bg-primary hover:text-white">
+                        <Pencil />
+                    </Button>
+                )}
             </DialogTrigger>
             <DialogContent className="sm:max-w-[625px] max-h-[90vh] overflow-y-auto">
                 <DialogHeader className="top-0 bg-background z-10 pb-4 mt-2">
-                    <DialogTitle>Registrer ny runde</DialogTitle>
+                    <DialogTitle>
+                        {mode === 'create' ? 'Registrer ny runde' : 'Rediger runde'}
+                    </DialogTitle>
                 </DialogHeader>
                 <form onSubmit={handleSubmit}>
                     <div className="grid gap-6 py-4">
@@ -464,7 +481,7 @@ export function CreateGolfForm() {
                             type="submit"
                             disabled={isSubmitting}
                         >
-                            {isSubmitting ? 'Saving...' : 'Save Round'}
+                            {isSubmitting ? 'Saving...' : mode === 'create' ? 'Save Round' : 'Update Round'}
                         </Button>
                     </DialogFooter>
                 </form>

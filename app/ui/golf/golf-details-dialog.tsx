@@ -7,6 +7,7 @@ import {
     DialogTitle,
 } from "@/components/ui/dialog"
 import { GolfRound } from "./columns"
+import { CreateGolfForm } from "./create-form"
 
 interface GolfDetailsDialogProps {
     round: GolfRound | null
@@ -23,9 +24,9 @@ export function GolfDetailsDialog({ round, data, open, onOpenChange }: GolfDetai
         averageLongestDrive: data.reduce((acc, curr) => acc + curr.data.longestDrive, 0) / data.length,
         averagePoints: data.reduce((acc, curr) => acc + curr.data.points, 0) / data.length,
         averageStrokes: data.reduce((acc, curr) => acc + curr.data.strokes, 0) / data.length,
-        fairwaysHitPercentage: (data.reduce((acc, curr) => acc + curr.data.fairwaysHit.hit, 0) / 
+        fairwaysHitPercentage: (data.reduce((acc, curr) => acc + curr.data.fairwaysHit.hit, 0) /
             data.reduce((acc, curr) => acc + curr.data.fairwaysHit.total, 0)) * 100,
-        greensInRegulationPercentage: (data.reduce((acc, curr) => acc + curr.data.greensInRegulation.hit, 0) / 
+        greensInRegulationPercentage: (data.reduce((acc, curr) => acc + curr.data.greensInRegulation.hit, 0) /
             data.reduce((acc, curr) => acc + curr.data.greensInRegulation.total, 0)) * 100,
         averageScrambling: data.reduce((acc, curr) => acc + curr.data.scrambling, 0) / data.length,
         scoringAverages: {
@@ -35,7 +36,7 @@ export function GolfDetailsDialog({ round, data, open, onOpenChange }: GolfDetai
             bogeys: data.reduce((acc, curr) => acc + curr.data.score.bogeys, 0) / data.length,
             doubleBogeys: data.reduce((acc, curr) => acc + curr.data.score.doubleBogeys, 0) / data.length,
             tripleBogeys: data.reduce((acc, curr) => acc + curr.data.score.tripleBogeys, 0) / data.length,
-        } 
+        }
     }
 
     const formatNumber = (num: number) => Number(num.toFixed(1))
@@ -44,7 +45,16 @@ export function GolfDetailsDialog({ round, data, open, onOpenChange }: GolfDetai
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent className="sm:max-w-[625px]">
                 <DialogHeader>
-                    <DialogTitle>{round.data.course} - {round.data.date}</DialogTitle>
+                    <DialogTitle>
+                        <div className="flex justify-between items-center mt-0 pr-4">
+                            <div>{round.data.course} - {round.data.date}</div>
+                            <CreateGolfForm
+                                initialData={round.data}
+                                mode="edit"
+                                id={round.id}
+                            />
+                        </div>
+                    </DialogTitle>
                 </DialogHeader>
                 <div className="grid gap-4 py-4">
                     <div className="grid grid-cols-2 items-start gap-4">
@@ -71,8 +81,8 @@ export function GolfDetailsDialog({ round, data, open, onOpenChange }: GolfDetai
                         <div>
                             <h3 className="font-medium mb-2">This Round</h3>
                             <div className="space-y-1">
-                                <p>Fairways: {round.data.fairwaysHit.hit}/{round.data.fairwaysHit.total}</p>
-                                <p>Greens: {round.data.greensInRegulation.hit}/{round.data.greensInRegulation.total}</p>
+                                <p>Fairways: {round.data.fairwaysHit.hit}/{round.data.fairwaysHit.total} ({(formatNumber(round.data.fairwaysHit.hit / round.data.fairwaysHit.total)) * 100}%)</p>
+                                <p>Greens: {round.data.greensInRegulation.hit}/{round.data.greensInRegulation.total} ({(formatNumber(round.data.greensInRegulation.hit / round.data.greensInRegulation.total)) * 100}%)</p>
                                 <p>Scrambling: {round.data.scrambling}%</p>
                             </div>
                         </div>
@@ -86,14 +96,14 @@ export function GolfDetailsDialog({ round, data, open, onOpenChange }: GolfDetai
                         </div>
                     </div>
                     <div>
-                        <h3 className="font-medium mb-2">Scoring Averages</h3>
+                        <h3 className="font-medium mb-2">Scoring</h3>
                         <div className="grid grid-cols-3 gap-2">
-                            <p>Eagles: {formatNumber(totals.scoringAverages.eagles)}</p>
-                            <p>Birdies: {formatNumber(totals.scoringAverages.birdies)}</p>
-                            <p>Pars: {formatNumber(totals.scoringAverages.pars)}</p>
-                            <p>Bogeys: {formatNumber(totals.scoringAverages.bogeys)}</p>
-                            <p>Doubles: {formatNumber(totals.scoringAverages.doubleBogeys)}</p>
-                            <p>Triples+: {formatNumber(totals.scoringAverages.tripleBogeys)}</p>
+                            <p>Eagles: {formatNumber(round.data.score.eagles)}</p>
+                            <p>Birdies: {formatNumber(round.data.score.birdies)}</p>
+                            <p>Pars: {formatNumber(round.data.score.pars)}</p>
+                            <p>Bogeys: {formatNumber(round.data.score.bogeys)}</p>
+                            <p>Doubles: {formatNumber(round.data.score.doubleBogeys)}</p>
+                            <p>Triples+: {formatNumber(round.data.score.tripleBogeys)}</p>
                         </div>
                     </div>
                 </div>
