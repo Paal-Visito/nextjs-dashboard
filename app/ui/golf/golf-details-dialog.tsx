@@ -59,51 +59,49 @@ export function GolfDetailsDialog({ round, data, open, onOpenChange }: GolfDetai
                 <div className="grid gap-4 py-4">
                     <div className="grid grid-cols-2 items-start gap-4">
                         <div>
-                            <h3 className="font-medium mb-2">This Round</h3>
+                            <h3 className="font-medium mb-2"><span className="font-bold">This Round</span></h3>
                             <div className="space-y-1">
-                                <p>Average Drive: {round.data.averageDrive}m</p>
-                                <p>Longest Drive: {round.data.longestDrive}m</p>
-                                <p>Points: {round.data.points}</p>
-                                <p>Strokes: {round.data.strokes}</p>
+                                <p>Average Drive: <span className="font-bold">{round.data.averageDrive}m</span></p>
+                                <p>Longest Drive: <span className="font-bold">{round.data.longestDrive}m</span></p>
+                                <p>Points: <span className="font-bold">{round.data.points}</span></p>
+                                <p>Strokes: <span className="font-bold">{round.data.strokes}</span></p>
                             </div>
                         </div>
                         <div>
-                            <h3 className="font-medium mb-2">Your Averages</h3>
+                            <h3 className="font-medium mb-2"><span className="font-bold">Your Averages</span></h3>
                             <div className="space-y-1">
-                                <p>Average Drive: {formatNumber(totals.averageDrive)}m</p>
-                                <p>Average Longest: {formatNumber(totals.averageLongestDrive)}m</p>
-                                <p>Average Points: {formatNumber(totals.averagePoints)}</p>
-                                <p>Average Strokes: {formatNumber(totals.averageStrokes)}</p>
+                                <p>Average Drive: <span className="font-bold">{formatNumber(totals.averageDrive)}m</span></p>
+                                <p>Average Longest: <span className="font-bold">{formatNumber(totals.averageLongestDrive)}m</span></p>
+                                <p>Average Points: <span className="font-bold">{formatNumber(totals.averagePoints)}</span></p>
+                                <p>Average Strokes: <span className="font-bold">{formatNumber(totals.averageStrokes)}</span></p>
                             </div>
                         </div>
                     </div>
                     <div className="grid grid-cols-2 items-start gap-4">
                         <div>
-                            <h3 className="font-medium mb-2">This Round</h3>
                             <div className="space-y-1">
-                                <p>Fairways: {round.data.fairwaysHit.hit}/{round.data.fairwaysHit.total} ({(formatNumber(round.data.fairwaysHit.hit / round.data.fairwaysHit.total)) * 100}%)</p>
-                                <p>Greens: {round.data.greensInRegulation.hit}/{round.data.greensInRegulation.total} ({(formatNumber(round.data.greensInRegulation.hit / round.data.greensInRegulation.total)) * 100}%)</p>
-                                <p>Scrambling: {round.data.scrambling}%</p>
+                                <p>Fairways: <span className="font-bold">{round.data.fairwaysHit.hit}/{round.data.fairwaysHit.total} ({(formatNumber(round.data.fairwaysHit.hit / round.data.fairwaysHit.total)) * 100}%)</span></p>
+                                <p>Greens: <span className="font-bold">{round.data.greensInRegulation.hit}/{round.data.greensInRegulation.total} ({(formatNumber(round.data.greensInRegulation.hit / round.data.greensInRegulation.total)) * 100}%)</span></p>
+                                <p>Scrambling: <span className="font-bold">{round.data.scrambling}%</span></p>
                             </div>
                         </div>
                         <div>
-                            <h3 className="font-medium mb-2">Your Averages</h3>
                             <div className="space-y-1">
-                                <p>Fairways: {formatNumber(totals.fairwaysHitPercentage)}%</p>
-                                <p>Greens: {formatNumber(totals.greensInRegulationPercentage)}%</p>
-                                <p>Scrambling: {formatNumber(totals.averageScrambling)}%</p>
+                                <p>Fairways: <span className="font-bold">{formatNumber(totals.fairwaysHitPercentage)}%</span></p>
+                                <p>Greens: <span className="font-bold">{formatNumber(totals.greensInRegulationPercentage)}%</span></p>
+                                <p>Scrambling: <span className="font-bold">{formatNumber(totals.averageScrambling)}%</span></p>
                             </div>
                         </div>
                     </div>
                     <div>
-                        <h3 className="font-medium mb-2">Scoring</h3>
+                        <h3 className="font-medium mb-2"><span className="font-bold">Scoring</span></h3>
                         <div className="grid grid-cols-3 gap-2">
-                            <p>Eagles: {formatNumber(round.data.score.eagles)}</p>
-                            <p>Birdies: {formatNumber(round.data.score.birdies)}</p>
-                            <p>Pars: {formatNumber(round.data.score.pars)}</p>
-                            <p>Bogeys: {formatNumber(round.data.score.bogeys)}</p>
-                            <p>Doubles: {formatNumber(round.data.score.doubleBogeys)}</p>
-                            <p>Triples+: {formatNumber(round.data.score.tripleBogeys)}</p>
+                            <p>Eagles: <span className="font-bold">{formatNumber(round.data.score.eagles)}</span></p>
+                            <p>Birdies: <span className="font-bold">{formatNumber(round.data.score.birdies)}</span></p>
+                            <p>Pars: <span className="font-bold">{formatNumber(round.data.score.pars)}</span></p>
+                            <p>Bogeys: <span className="font-bold">{formatNumber(round.data.score.bogeys)}</span></p>
+                            <p>Doubles: <span className="font-bold">{formatNumber(round.data.score.doubleBogeys)}</span></p>
+                            <p>Triples+: <span className="font-bold">{formatNumber(round.data.score.tripleBogeys)}</span></p>
                         </div>
                     </div>
                 </div>
