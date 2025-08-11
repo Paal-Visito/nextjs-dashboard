@@ -4,6 +4,7 @@ import { fetchGolfRounds } from "@/app/lib/data";
 import { columns } from '@/app/ui/golf/columns'
 import { CreateGolfForm } from "@/app/ui/golf/create-form";
 import { ScoringButton } from "@/app/ui/golf/scoring-button";
+export const dynamic = 'force-dynamic'
 
 export default async function GolfPage() {
     const golfRounds = (await fetchGolfRounds()).toSorted((a, b) =>
