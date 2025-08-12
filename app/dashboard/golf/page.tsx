@@ -4,7 +4,14 @@ import { fetchGolfRounds } from "@/app/lib/data";
 import { columns } from '@/app/ui/golf/columns'
 import { CreateGolfForm } from "@/app/ui/golf/create-form";
 import { ScoringButton } from "@/app/ui/golf/scoring-button";
+import { StatCard } from "@/app/ui/golf/stat-card";
 export const dynamic = 'force-dynamic'
+
+type StatRecord = {
+    value: number;
+    course: string;
+    date: string;
+}
 
 export default async function GolfPage() {
     const golfRounds = (await fetchGolfRounds()).toSorted((a, b) =>
@@ -28,6 +35,45 @@ export default async function GolfPage() {
             bogeys: golfRounds.reduce((acc, curr) => acc + curr.data.score.bogeys, 0) / golfRounds.length,
             doubleBogeys: golfRounds.reduce((acc, curr) => acc + curr.data.score.doubleBogeys, 0) / golfRounds.length,
             tripleBogeys: golfRounds.reduce((acc, curr) => acc + curr.data.score.tripleBogeys, 0) / golfRounds.length,
+        },
+        totals: {
+            longestDrive: golfRounds
+                .reduce<StatRecord | null>((max, round) =>
+                    round.data.longestDrive > (max?.value ?? 0)
+                        ? {
+                            value: round.data.longestDrive,
+                            course: round.data.course,
+                            date: round.data.date
+                        }
+                        : max,
+                    null),
+            lowestStrokes: golfRounds
+                .filter(round => round.data.holes === 18)
+                .reduce<StatRecord | null>((min, round) =>
+                    round.data.strokes < (min?.value ?? Infinity)
+                        ? {
+                            value: round.data.strokes,
+                            course: round.data.course,
+                            date: round.data.date
+                        }
+                        : min,
+                    null),
+            highestScore: golfRounds
+                .reduce<StatRecord | null>((max, round) =>
+                    round.data.points > (max?.value ?? 0)
+                        ? {
+                            value: round.data.points,
+                            course: round.data.course,
+                            date: round.data.date
+                        }
+                        : max,
+                    null),
+            totalEagles: golfRounds.reduce((acc, curr) => acc + curr.data.score.eagles, 0),
+            totalBirdies: golfRounds.reduce((acc, curr) => acc + curr.data.score.birdies, 0),
+            totalPars: golfRounds.reduce((acc, curr) => acc + curr.data.score.pars, 0),
+            totalBogeys: golfRounds.reduce((acc, curr) => acc + curr.data.score.bogeys, 0),
+            totalDoubleBogeys: golfRounds.reduce((acc, curr) => acc + curr.data.score.doubleBogeys, 0),
+            totalTripleBogeys: golfRounds.reduce((acc, curr) => acc + curr.data.score.tripleBogeys, 0),
         }
     }
 
@@ -46,10 +92,36 @@ export default async function GolfPage() {
                 <h1 className={`${lusitana.className} mb-4 text-xl md:text-2xl text-white`}>
                     Averages
                 </h1>
+                <div className="grid grid-cols-1 lg:grid-cols-3 justify-items-center gap-4 mb-4">
+                    <StatCard
+                        title="Longest Drive"
+                        stat={totals.totals.longestDrive}
+                        color="#22c55e"
+                        rounds={golfRounds}
+                        dataKey="longestDrive"
+                        valueUnit="yards"
+                    />
+                    <StatCard
+                        title="Lowest Score"
+                        stat={totals.totals.lowestStrokes}
+                        color="#3b82f6"
+                        rounds={golfRounds.filter(round => round.data.holes === 18)}
+                        dataKey="strokes"
+                        isMinBetter={true}
+                    />
+                    <StatCard
+                        title="Best Points"
+                        stat={totals.totals.highestScore}
+                        color="#f59e0b"
+                        rounds={golfRounds}
+                        dataKey="points"
+                    />
+                </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 justify-items-center gap-2">
                     <ScoringButton
                         title="Eagles"
                         value={totals.scoringAverages.eagles}
+                        total={totals.totals.totalEagles}
                         color="#2563eb"
                         rounds={golfRounds}
                         scoreKey="eagles"
@@ -57,6 +129,7 @@ export default async function GolfPage() {
                     <ScoringButton
                         title="Birdies"
                         value={totals.scoringAverages.birdies}
+                        total={totals.totals.totalBirdies}
                         color="#16a34a"
                         rounds={golfRounds}
                         scoreKey="birdies"
@@ -64,6 +137,7 @@ export default async function GolfPage() {
                     <ScoringButton
                         title="Pars"
                         value={totals.scoringAverages.pars}
+                        total={totals.totals.totalPars}
                         color="#ca8a04"
                         rounds={golfRounds}
                         scoreKey="pars"
@@ -71,6 +145,7 @@ export default async function GolfPage() {
                     <ScoringButton
                         title="Bogeys"
                         value={totals.scoringAverages.bogeys}
+                        total={totals.totals.totalBogeys}
                         color="#2563eb"
                         rounds={golfRounds}
                         scoreKey="bogeys"
@@ -78,6 +153,7 @@ export default async function GolfPage() {
                     <ScoringButton
                         title="Double bogeys"
                         value={totals.scoringAverages.doubleBogeys}
+                        total={totals.totals.totalDoubleBogeys}
                         color="#16a34a"
                         rounds={golfRounds}
                         scoreKey="doubleBogeys"
@@ -85,6 +161,7 @@ export default async function GolfPage() {
                     <ScoringButton
                         title="Tripple bogeys+"
                         value={totals.scoringAverages.tripleBogeys}
+                        total={totals.totals.totalTripleBogeys}
                         color="#ca8a04"
                         rounds={golfRounds}
                         scoreKey="tripleBogeys"

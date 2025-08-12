@@ -9,6 +9,7 @@ interface ChartProps {
   description?: string
   data: {
     date: string
+    course: string
     value: number
   }[]
   color: string
@@ -42,6 +43,9 @@ export function Chart({ title, description, data, color }: ChartProps) {
                         <div className="flex flex-col">
                           <span className="text-[0.70rem] uppercase text-muted-foreground">
                             {format(new Date(payload[0].payload.date), 'PPP')}
+                          </span>
+                          <span className="text-[0.70rem] text-muted-foreground">
+                            {payload[0].payload.course}
                           </span>
                           <span className="font-bold text-muted-foreground">
                             {payload[0].value}

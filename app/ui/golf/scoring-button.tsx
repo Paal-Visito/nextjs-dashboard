@@ -10,6 +10,7 @@ import { format, startOfMonth, isWithinInterval, subMonths } from "date-fns"
 interface ScoringButtonProps {
     title: string
     value: number
+    total: number
     color: string
     rounds: GolfRound[]
     scoreKey: keyof GolfRound['data']['score']
@@ -18,6 +19,7 @@ interface ScoringButtonProps {
 export function ScoringButton({
     title,
     value,
+    total,
     color,
     rounds,
     scoreKey
@@ -26,6 +28,7 @@ export function ScoringButton({
         .sort((a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime())
         .map(round => ({
             date: round.data.date,
+            course: round.data.course,
             value: round.data.score[scoreKey]
         }))
 
@@ -109,6 +112,7 @@ export function ScoringButton({
                     </div>
                     <div className="flex flex-col items-center gap-1 transition-colors group-hover:text-primary">
                         <div className="text-2xl font-bold">{value.toFixed(1)}</div>
+                        <div className="text-sm text-muted-foreground">Total: {total}</div>
                         <div className="text-sm text-muted-foreground">{percentage}% of holes</div>
                     </div>
                 </Button>
