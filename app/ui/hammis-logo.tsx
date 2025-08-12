@@ -1,13 +1,21 @@
 import { lusitana } from '@/app/ui/fonts';
 import { Guitar } from 'lucide-react';
+import Image from 'next/image';
 
 export default function AcmeLogo() {
   return (
     <div
       className={`${lusitana.className} flex flex-row items-center gap-4 leading-none text-white`}
     >
-      <Guitar className="h-12 w-12 rotate-[15deg]" />
-      <p className="text-[44px]">Hammis</p>
+      <Image
+        src="/golf-player.png"
+        alt="Screenshots of the dashboard project showing desktop version"
+        height={60}
+        width={60}
+        className="object-cover"
+        priority
+      />
+      <p className="text-[44px]">Hammis Golf Stats</p>
     </div>
   );
 }

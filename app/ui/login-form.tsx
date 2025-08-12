@@ -13,7 +13,7 @@ import { Button } from '@/components/ui/button';
 
 export default function LoginForm() {
   const searchParams = useSearchParams()
-  const callbackUrl = searchParams.get('callbackUrl') || '/dashboard'
+  const callbackUrl = searchParams.get('callbackUrl') || '/dashboard/golf'
   const [errorMessage, formAction, isPending] = useActionState(
     authenticate,
     undefined,

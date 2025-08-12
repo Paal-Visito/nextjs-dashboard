@@ -4,10 +4,10 @@ import { Metadata } from 'next';
  
 export const metadata: Metadata = {
   title: {
-    template: '%s | Hammis Dashboard',
-    default: 'Hammis Dashboard',
+    template: '%s | Hammis Golf Stats',
+    default: 'Hammis Golf Stats',
   },
-  description: 'Hammis golf stats',
+  description: 'Hammis Golf Stats',
   metadataBase: new URL('https://next-learn-dashboard.vercel.sh'),
   icons: {
     icon: '/golf-player_icon.ico'

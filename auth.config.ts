@@ -17,7 +17,7 @@ export const authConfig = {
             }
             return false
         } else if (isLoggedIn) {
-            return Response.redirect(new URL('/dashboard', nextUrl))
+            return Response.redirect(new URL('/dashboard/golf', nextUrl))
         }
         return true
     }
