@@ -4,11 +4,14 @@ import { Metadata } from 'next';
  
 export const metadata: Metadata = {
   title: {
-    template: '%s | Acme Dashboard',
-    default: 'Acme Dashboard',
+    template: '%s | Hammis Dashboard',
+    default: 'Hammis Dashboard',
   },
-  description: 'The official Next.js Learn Dashboard built with App Router.',
-  metadataBase: new URL('https://next-learn-dashboard.vercel.sh')
+  description: 'Hammis golf stats',
+  metadataBase: new URL('https://next-learn-dashboard.vercel.sh'),
+  icons: {
+    icon: '/golf-player_icon.ico'
+  }
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
