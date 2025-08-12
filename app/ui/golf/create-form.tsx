@@ -8,6 +8,18 @@ import {
     DialogTrigger,
     DialogFooter
 } from "@/components/ui/dialog";
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
+import { Trash2 } from "lucide-react"
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -181,6 +193,26 @@ export function CreateGolfForm({ initialData, mode = 'create', id }: CreateGolfF
                 ...prev,
                 [name]: value === '' ? null : (Number(value) || value)
             }))
+        }
+    }
+
+    async function handleDelete() {
+        setIsSubmitting(true)
+        try {
+            const response = await fetch(`/api/golf/${id}`, {
+                method: 'DELETE',
+            })
+
+            if (!response.ok) {
+                throw new Error('Failed to delete golf round')
+            }
+
+            setOpen(false)
+            router.refresh()
+        } catch (error) {
+            console.error('Error deleting golf round:', error)
+        } finally {
+            setIsSubmitting(false)
         }
     }
 
@@ -477,6 +509,37 @@ export function CreateGolfForm({ initialData, mode = 'create', id }: CreateGolfF
                     </div>
 
                     <DialogFooter className="sticky bottom-0 bg-background pt-4">
+                        {mode === 'edit' && (
+                            <AlertDialog>
+                                <AlertDialogTrigger asChild>
+                                    <Button
+                                        type="button"
+                                        variant="destructive"
+                                        disabled={isSubmitting}
+                                    >
+                                        <Trash2 className="h-4 w-4 mr-2" />
+                                        Delete
+                                    </Button>
+                                </AlertDialogTrigger>
+                                <AlertDialogContent>
+                                    <AlertDialogHeader>
+                                        <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                                        <AlertDialogDescription>
+                                            This action cannot be undone. This will permanently delete this golf round.
+                                        </AlertDialogDescription>
+                                    </AlertDialogHeader>
+                                    <AlertDialogFooter>
+                                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                        <AlertDialogAction
+                                            onClick={handleDelete}
+                                            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                                        >
+                                            Delete
+                                        </AlertDialogAction>
+                                    </AlertDialogFooter>
+                                </AlertDialogContent>
+                            </AlertDialog>
+                        )}
                         <Button
                             type="submit"
                             disabled={isSubmitting}
