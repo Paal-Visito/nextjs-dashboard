@@ -33,7 +33,6 @@ export function StatCard({
     color,
     rounds,
     dataKey,
-    isMinBetter = false,
     valueUnit = ''
 }: StatCardProps) {
     if (!stat) return null
