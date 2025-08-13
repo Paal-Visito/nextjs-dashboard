@@ -70,7 +70,7 @@ export function ScoringButton({
             <DialogTrigger asChild>
                 <Button
                     variant="outline"
-                    className="h-60 w-52 flex flex-col items-center justify-between p-6 hover:bg-gray-800/10 transition-colors"
+                    className="h-60 w-full md:w-52 flex flex-col items-center justify-between p-6 hover:bg-gray-800/10 transition-colors"
                 >
                     <div className="text-sm font-medium">{title}</div>
                     <div className="w-full h-28">

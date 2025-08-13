@@ -9,12 +9,12 @@ export default function AcmeLogo() {
       <Image
         src="/golf-player.png"
         alt="Screenshots of the dashboard project showing desktop version"
-        height={60}
-        width={60}
+        height={50}
+        width={50}
         className="object-cover"
         priority
       />
-      <p className="text-[44px]">Hammis Golf Stats</p>
+      <p className="text-[28px] md:text-[44px]">Hammis Golf Stats</p>
     </div>
   );
 }
