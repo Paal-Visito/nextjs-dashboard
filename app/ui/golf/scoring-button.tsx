@@ -70,16 +70,20 @@ export function ScoringButton({
             <DialogTrigger asChild>
                 <Button
                     variant="outline"
-                    className="h-60 w-full md:w-52 flex flex-col items-center justify-between p-6 hover:bg-gray-800/10 transition-colors"
+                    className="group h-65 w-full md:w-52 flex flex-col items-center justify-between p-6 hover:bg-gray-800/10 transition-colors"
                 >
-                    <div className="text-sm font-medium">{title}</div>
-                    <div className="w-full h-28">
+                    <div className="text-sm font-medium group-hover:text-white transition-colors">{title}</div>
+                    <div className="w-full h-32">
                         <ResponsiveContainer width="100%" height="100%">
                             <RadarChart data={monthlyData}>
                                 <PolarGrid strokeOpacity={0.5} />
                                 <PolarAngleAxis
                                     dataKey="name"
-                                    tick={{ fill: 'currentColor', fontSize: '10px' }}
+                                    tick={{
+                                        fill: 'var(--tick-color)',
+                                        fontSize: '10px'
+                                    }}
+                                    className="[--tick-color:currentColor] group-hover:[--tick-color:white] transition-colors"
                                 />
                                 <Radar
                                     name={title}
@@ -111,7 +115,7 @@ export function ScoringButton({
                         </ResponsiveContainer>
                     </div>
                     <div className="flex flex-col items-center gap-1 transition-colors group-hover:text-primary">
-                        <div className="text-2xl font-bold">{value.toFixed(1)}</div>
+                        <div className="text-2xl font-bold group-hover:text-white transition-colors">{value.toFixed(1)}</div>
                         <div className="text-sm text-muted-foreground">Total: {total}</div>
                         <div className="text-sm text-muted-foreground">{percentage}% of holes</div>
                     </div>
@@ -131,6 +135,7 @@ export function ScoringButton({
                         title={`${title} History`}
                         data={lineChartData}
                         color={color}
+                        theme="dark"
                     />
                     <div className="h-[300px]">
                         <ResponsiveContainer width="100%" height="100%">
