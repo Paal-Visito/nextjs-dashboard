@@ -26,10 +26,12 @@ interface StatCardProps {
     dataKey: 'longestDrive' | 'strokes' | 'points'
     isMinBetter?: boolean
     valueUnit?: string
+    average: number
 }
 export function StatCard({
     title,
     stat,
+    average,
     color,
     rounds,
     dataKey,
@@ -54,13 +56,14 @@ export function StatCard({
             <DialogTrigger asChild>
                 <Button
                     variant="outline"
-                    className="group h-40 w-full flex flex-col items-center justify-between p-6 hover:bg-gray-800/10 transition-colors"
+                    className="group h-50 w-full flex flex-col items-center justify-between p-6 hover:bg-gray-800/10 transition-colors"
                 >
                     <div className="text-lg font-medium group-hover:text-white transition-colors">{title}</div>
                     <div className="flex flex-col items-center gap-1">
                         <div className="text-3xl font-bold" style={{ color }}>
                             {formatValue(stat.value)}
                         </div>
+                        <div className="text-sm text-muted-foreground">Average: {average}</div>
                         <div className="text-sm text-muted-foreground">{stat.course}</div>
                         <div className="text-xs text-muted-foreground">
                             {format(new Date(stat.date), 'MMM d, yyyy')}

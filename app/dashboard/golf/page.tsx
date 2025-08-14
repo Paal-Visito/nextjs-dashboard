@@ -18,11 +18,15 @@ export default async function GolfPage() {
         new Date(b.data.date).getTime() - new Date(a.data.date).getTime()
     )
 
+    const latestTwentyRounds = golfRounds
+        .sort((a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime())
+        .slice(0, 20);
+
     const totals = {
-        averageDrive: golfRounds.reduce((acc, curr) => acc + curr.data.averageDrive, 0) / golfRounds.length,
-        averageLongestDrive: golfRounds.reduce((acc, curr) => acc + curr.data.longestDrive, 0) / golfRounds.length,
-        averagePoints: golfRounds.reduce((acc, curr) => acc + curr.data.points, 0) / golfRounds.length,
-        averageStrokes: golfRounds.reduce((acc, curr) => acc + curr.data.strokes, 0) / golfRounds.length,
+        averageDrive: Math.round(latestTwentyRounds.reduce((acc, curr) => acc + curr.data.averageDrive, 0) / latestTwentyRounds.length),
+        averageLongestDrive: Math.round(latestTwentyRounds.reduce((acc, curr) => acc + curr.data.longestDrive, 0) / latestTwentyRounds.length),
+        averagePoints: Math.round(latestTwentyRounds.reduce((acc, curr) => acc + curr.data.points, 0) / latestTwentyRounds.length),
+        averageStrokes: Math.round(latestTwentyRounds.reduce((acc, curr) => acc + curr.data.strokes, 0) / latestTwentyRounds.length),
         fairwaysHitPercentage: (golfRounds.reduce((acc, curr) => acc + curr.data.fairwaysHit.hit, 0) /
             golfRounds.reduce((acc, curr) => acc + curr.data.fairwaysHit.total, 0)) * 100,
         greensInRegulationPercentage: (golfRounds.reduce((acc, curr) => acc + curr.data.greensInRegulation.hit, 0) /
@@ -96,6 +100,7 @@ export default async function GolfPage() {
                     <StatCard
                         title="Longest Drive"
                         stat={totals.totals.longestDrive}
+                        average={totals.averageDrive}
                         color="#22c55e"
                         rounds={golfRounds}
                         dataKey="longestDrive"
@@ -104,6 +109,7 @@ export default async function GolfPage() {
                     <StatCard
                         title="Lowest Score"
                         stat={totals.totals.lowestStrokes}
+                        average={totals.averageStrokes}
                         color="#3b82f6"
                         rounds={golfRounds.filter(round => round.data.holes === 18)}
                         dataKey="strokes"
@@ -112,6 +118,7 @@ export default async function GolfPage() {
                     <StatCard
                         title="Best Points"
                         stat={totals.totals.highestScore}
+                        average={totals.averagePoints}
                         color="#f59e0b"
                         rounds={golfRounds}
                         dataKey="points"
