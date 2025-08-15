@@ -81,6 +81,73 @@ export default async function GolfPage() {
         }
     }
 
+    const additionalStats = {
+        // Putting average per round
+        puttingAverage: (
+            golfRounds.reduce((acc, curr) => acc + curr.data.putts.hit, 0) /
+            golfRounds.length
+        ).toFixed(1),
+
+        // Fairway accuracy percentage
+        fairwayAccuracy: (
+            (golfRounds.reduce((acc, curr) => acc + curr.data.fairwaysHit.hit, 0) /
+                golfRounds.reduce((acc, curr) => acc + curr.data.fairwaysHit.total, 0)) * 100
+        ).toFixed(1),
+
+        // GIR (Greens in Regulation) percentage
+        girPercentage: (
+            (golfRounds.reduce((acc, curr) => acc + curr.data.greensInRegulation.hit, 0) /
+                golfRounds.reduce((acc, curr) => acc + curr.data.greensInRegulation.total, 0)) * 100
+        ).toFixed(1),
+
+        // Scoring distribution percentage
+        scoringDistribution: {
+            eaglePercentage: (
+                (golfRounds.reduce((acc, curr) => acc + curr.data.score.eagles, 0) /
+                    golfRounds.reduce((acc, curr) => (
+                        acc + curr.data.score.eagles +
+                        curr.data.score.birdies +
+                        curr.data.score.pars +
+                        curr.data.score.bogeys +
+                        curr.data.score.doubleBogeys +
+                        curr.data.score.tripleBogeys
+                    ), 0)) * 100
+            ).toFixed(1),
+            // ... similar calculations for other scores
+        },
+
+        // Course performance
+        coursePerformance: golfRounds.reduce((acc, curr) => {
+            if (!acc[curr.data.course]) {
+                acc[curr.data.course] = {
+                    rounds: 0,
+                    averagePoints: 0,
+                    averageStrokes: 0,
+                    bestScore: Infinity,
+                }
+            }
+
+            acc[curr.data.course].rounds++
+            acc[curr.data.course].averagePoints += curr.data.points
+            acc[curr.data.course].averageStrokes += curr.data.strokes
+            acc[curr.data.course].bestScore = Math.min(acc[curr.data.course].bestScore, curr.data.strokes)
+
+            return acc
+        }, {} as Record<string, {
+            rounds: number
+            averagePoints: number
+            averageStrokes: number
+            bestScore: number
+        }>)
+    }
+
+    // Calculate final averages for course performance
+    Object.keys(additionalStats.coursePerformance).forEach(course => {
+        const stats = additionalStats.coursePerformance[course]
+        stats.averagePoints = Number((stats.averagePoints / stats.rounds).toFixed(1))
+        stats.averageStrokes = Number((stats.averageStrokes / stats.rounds).toFixed(1))
+    })
+
     return (
         <main>
             <div className="flex justify-between">
@@ -173,6 +240,69 @@ export default async function GolfPage() {
                         rounds={golfRounds}
                         scoreKey="tripleBogeys"
                     />
+                </div>
+            </div>
+            <div className="container mx-auto py-10">
+                <h1 className={`${lusitana.className} mb-4 text-xl md:text-2xl text-white`}>
+                    Additional Statistics
+                </h1>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <StatCard
+                        title="Putting Average"
+                        stat={{
+                            value: Number(additionalStats.puttingAverage),
+                            course: "-",
+                            date: new Date().toISOString()
+                        }}
+                        average={Number(additionalStats.puttingAverage)}
+                        color="#9333ea"
+                        rounds={golfRounds}
+                        dataKey="putts"
+                        valueUnit="putts/round"
+                    />
+                    <StatCard
+                        title="Fairway Accuracy"
+                        stat={{
+                            value: Number(additionalStats.fairwayAccuracy),
+                            course: "-",
+                            date: new Date().toISOString()
+                        }}
+                        average={Number(additionalStats.fairwayAccuracy)}
+                        color="#ec4899"
+                        rounds={golfRounds}
+                        dataKey="fairwaysHit"
+                        valueUnit="%"
+                    />
+                    <StatCard
+                        title="Greens in Regulation"
+                        stat={{
+                            value: Number(additionalStats.girPercentage),
+                            course: "-",
+                            date: new Date().toISOString()
+                        }}
+                        average={Number(additionalStats.girPercentage)}
+                        color="#14b8a6"
+                        rounds={golfRounds}
+                        dataKey="greensInRegulation"
+                        valueUnit="%"
+                    />
+                </div>
+
+                <div className="mt-8">
+                    <h2 className={`${lusitana.className} mb-4 text-lg text-white`}>
+                        Course Performance
+                    </h2>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        {Object.entries(additionalStats.coursePerformance).sort(([courseA], [courseB]) => courseA.localeCompare(courseB)).map(([course, stats]) => (
+                            <div key={course} className="p-4 rounded-lg bg-gray-800 text-white">
+                                <h3 className="font-bold text-lg underline mb-2">{course}</h3>
+                                <p>Rounds Played: {stats.rounds}</p>
+                                <p>Average Points: {stats.averagePoints}</p>
+                                <p>Average Strokes: {stats.averageStrokes}</p>
+                                <p>Best Stroke Score: {stats.bestScore}</p>
+                            </div>
+                        ))}
+                    </div>
                 </div>
             </div>
         </main>

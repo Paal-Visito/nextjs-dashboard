@@ -23,7 +23,7 @@ interface StatCardProps {
     stat: StatRecord | null
     color: string
     rounds: GolfRound[]
-    dataKey: 'longestDrive' | 'strokes' | 'points'
+    dataKey: 'longestDrive' | 'strokes' | 'points' | 'putts' | 'fairwaysHit' | 'greensInRegulation'
     isMinBetter?: boolean
     valueUnit?: string
     average: number
