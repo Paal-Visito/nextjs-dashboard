@@ -83,10 +83,18 @@ export default async function GolfPage() {
 
     const additionalStats = {
         // Putting average per round
-        puttingAverage: (
-            golfRounds.reduce((acc, curr) => acc + curr.data.putts.hit, 0) /
-            golfRounds.length
-        ).toFixed(1),
+        puttingAverage: (() => {
+            const validRounds = golfRounds.filter(round => {
+                const puttsHit = round.data.putts.hit;
+                // Filter out obviously bad data (too high or suspicious low values)
+                return puttsHit > 1 && puttsHit < 4;
+            });
+
+            return (
+                validRounds.reduce((acc, curr) => acc + curr.data.putts.hit, 0) /
+                validRounds.length
+            ).toFixed(1);
+        })(),
 
         // Fairway accuracy percentage
         fairwayAccuracy: (
@@ -99,22 +107,6 @@ export default async function GolfPage() {
             (golfRounds.reduce((acc, curr) => acc + curr.data.greensInRegulation.hit, 0) /
                 golfRounds.reduce((acc, curr) => acc + curr.data.greensInRegulation.total, 0)) * 100
         ).toFixed(1),
-
-        // Scoring distribution percentage
-        scoringDistribution: {
-            eaglePercentage: (
-                (golfRounds.reduce((acc, curr) => acc + curr.data.score.eagles, 0) /
-                    golfRounds.reduce((acc, curr) => (
-                        acc + curr.data.score.eagles +
-                        curr.data.score.birdies +
-                        curr.data.score.pars +
-                        curr.data.score.bogeys +
-                        curr.data.score.doubleBogeys +
-                        curr.data.score.tripleBogeys
-                    ), 0)) * 100
-            ).toFixed(1),
-            // ... similar calculations for other scores
-        },
 
         // Course performance
         coursePerformance: golfRounds.reduce((acc, curr) => {

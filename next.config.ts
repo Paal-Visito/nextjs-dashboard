@@ -1,8 +1,9 @@
-import type { NextConfig } from 'next';
-
-const nextConfig: NextConfig = {
+const nextConfig = {
   experimental: {
-    ppr: 'incremental'
+    // Remove this line:
+    // ppr: 'incremental'
+    
+    // Keep any other experimental features you might have
   }
 };
 
